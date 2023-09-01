@@ -1,0 +1,21 @@
+# Start Zookeeper & Kafka
+kubectl apply -f 01-zookeeper.yaml
+kubectl apply -f 02-kafka.yaml
+
+# Start producer
+faust -A main worker -l INFO
+
+
+# Test
+# kubectl exec Syntax
+
+kubectl exec --stdin --tty {POD_NAME} -- /bin/bash
+
+## Create topic
+kafka-topics.sh --create --bootstrap-server kafka-service:9092 --replication-factor 1 --partitions 1 --topic room_1
+
+## Procude message
+kafka-console-producer.sh --bootstrap-server kafka-service:9092 --producer.config /opt/kafka/config/producer.properties --topic room_1
+
+## Consume message
+kafka-console-consumer.sh --bootstrap-server kafka-service:9092 --consumer.config /opt/kafka/config/consumer.properties --topic room_1 --from-beginning
